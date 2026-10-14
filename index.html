@@ -906,58 +906,57 @@ SIGN UP
 </div>
 
 <h3 class="form-title">Personal Information</h3>
+<p class="sc-form-hint">Fields marked <strong>*</strong> are mandatory.</p>
 
-<input class="input" placeholder="Full Name">
+<label class="sc-field-label" for="scFullName">Full Name <strong>*</strong></label>
+<input id="scFullName" class="input" placeholder="Enter your full name" autocomplete="name" required>
 
-<input class="input" type="email" placeholder="Email Address">
+<label class="sc-field-label" for="scEmail">Email Address <strong>*</strong></label>
+<input id="scEmail" class="input" type="email" placeholder="name@example.com" autocomplete="email" required>
 
-<input class="input" type="tel" placeholder="Phone Number">
+<label class="sc-field-label" for="scPhone">Phone Number</label>
+<input id="scPhone" class="input" type="tel" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
 
-<input class="input" type="date">
-
-<select class="input">
-<option>Select User Type</option>
+<label class="sc-field-label" for="scUserType">User Type <strong>*</strong></label>
+<select id="scUserType" class="input" required>
+<option value="">Select user type *</option>
 <option>Student</option>
 <option>Faculty</option>
 <option>Visitor</option>
 <option>Staff</option>
 </select>
 
-<input class="input" placeholder="College / University">
+<label class="sc-field-label" for="scCampusSelect">Your College Campus <strong>*</strong></label>
+<select id="scCampusSelect" class="input" required>
+<option value="">Select your campus *</option>
+<option value="Cummins College of Engineering for Women">Cummins College of Engineering for Women</option>
+<option value="COEP Technological University">COEP Technological University</option>
+<option value="VIT Pune">VIT Pune</option>
+<option value="MIT-WPU">MIT-WPU</option>
+<option value="Symbiosis">Symbiosis</option>
+<option value="Fergusson College">Fergusson College</option>
+<option value="Savitribai Phule Pune University">Savitribai Phule Pune University</option>
+</select>
+<p class="sc-form-hint">Your account will only show the campus selected here.</p>
 
-<select class="input">
-<option>Select Year</option>
+<label class="sc-field-label" for="scYear">Year of Study</label>
+<select id="scYear" class="input">
+<option value="">Select year (optional)</option>
 <option>First Year</option>
 <option>Second Year</option>
 <option>Third Year</option>
 <option>Final Year</option>
 </select>
 
-<h3 class="form-title">
-Create Password
-</h3>
+<h3 class="form-title">Create Password</h3>
+<label class="sc-field-label" for="scPassword">Password <strong>*</strong></label>
+<input id="scPassword" class="input" type="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+<label class="sc-field-label" for="scConfirmPassword">Confirm Password <strong>*</strong></label>
+<input id="scConfirmPassword" class="input" type="password" placeholder="Enter password again" autocomplete="new-password" required>
 
-<input
-class="input"
-type="password"
-placeholder="Password">
-
-<input
-class="input"
-type="password"
-placeholder="Confirm Password">
-
-<label style="display:flex;gap:8px;margin-top:12px;font-size:11px;color:#777">
-
-<input type="checkbox">
-
-I agree to the Terms & Privacy Policy
-
-</label>
-
-<button class="primary" onclick="showScreen('created')">
-Create Account
-</button>
+<label class="sc-terms"><input id="scTerms" type="checkbox" required> <span>I agree to the Terms & Privacy Policy <strong>*</strong></span></label>
+<div id="scSignupError" class="sc-form-error" role="alert" aria-live="polite" hidden></div>
+<button class="primary" type="button" onclick="createSmartCampusAccount()">Create Account</button>
 
 </section>
 
@@ -1035,7 +1034,7 @@ Your SmartCampus account has been created successfully.
 
 <div class="row" style="margin-top:12px">
 <span>🎓 User Type</span>
-<b>Student</b>
+<b id="scCreatedUserType">Student</b>
 </div>
 
 </div>
@@ -1073,26 +1072,15 @@ HOME
 </div>
 
 
-<button class="campus-button" onclick="showScreen('campuses')">
-
-<div class="row">
-
-<div>
-<div style="font-size:16px;font-weight:800">
-📍 Choose a Campus
-</div>
-
-<small>
-Select a college campus in Pune
-</small>
-</div>
-
-<div style="font-size:25px">
-›
-</div>
-
-</div>
-
+<button id="scHomeCampusCard" class="campus-button" onclick="scOpenHomeCampus()" aria-label="Open your registered campus map">
+  <div class="row">
+    <div style="flex:1;min-width:0">
+      <div id="scHomeCampusHeading" style="font-size:16px;font-weight:800">📍 Your Registered Campus</div>
+      <div id="scHomeCampusName" style="font-size:14px;font-weight:700;margin-top:7px;line-height:1.4">Select your campus during registration</div>
+      <small id="scHomeCampusHint" style="display:block;margin-top:5px">View your campus map and facilities</small>
+    </div>
+    <div style="font-size:25px;margin-left:8px" aria-hidden="true">›</div>
+  </div>
 </button>
 
 
@@ -2505,51 +2493,41 @@ onclick="showScreen('profile')">
 
 <div class="center">
 
-<div class="avatar">
-Y
-</div>
+<div class="avatar" id="editProfileAvatar">?</div>
 
-<p>
-Change Profile Photo
-</p>
+<p>Change Profile Photo</p>
 
 </div>
 
+<label class="sc-field-label" for="editProfileName">Full Name *</label>
+<input id="editProfileName" class="input" placeholder="Full Name" autocomplete="name" required>
+<small id="editProfileNameFeedback" class="sc-field-feedback"></small>
 
-<input
-class="input"
-value="User"
-placeholder="Full Name">
+<label class="sc-field-label" for="editProfileEmail">Email Address *</label>
+<input id="editProfileEmail" class="input" type="email" placeholder="Email Address" autocomplete="email" required>
+<small id="editProfileEmailFeedback" class="sc-field-feedback"></small>
 
-<input
-class="input"
-value="student@email.com"
-placeholder="Email Address">
+<label class="sc-field-label" for="editProfilePhone">Phone Number</label>
+<input id="editProfilePhone" class="input" type="tel" placeholder="Phone Number" inputmode="numeric" autocomplete="tel">
+<small id="editProfilePhoneFeedback" class="sc-field-feedback"></small>
 
-<input
-class="input"
-placeholder="Phone Number">
+<label class="sc-field-label" for="editProfileCampus">Registered College Campus</label>
+<input id="editProfileCampus" class="input" placeholder="College / University" readonly aria-describedby="editProfileCampusHint">
+<small id="editProfileCampusHint" class="sc-form-hint">Campus is fixed to the college selected during registration to protect campus-specific access.</small>
 
-<input
-class="input"
-placeholder="College / University">
-
-
-<select class="input">
-
-<option>Student</option>
-<option>Faculty</option>
-<option>Visitor</option>
-
+<label class="sc-field-label" for="editProfileUserType">User Type *</label>
+<select id="editProfileUserType" class="input" required>
+<option value="">Select user type</option>
+<option>Student</option><option>Faculty</option><option>Visitor</option><option>Staff</option>
 </select>
 
+<label class="sc-field-label" for="editProfileYear">Year of Study</label>
+<select id="editProfileYear" class="input">
+<option value="">Not specified</option><option>First Year</option><option>Second Year</option><option>Third Year</option><option>Final Year</option>
+</select>
 
-<button class="primary"
-onclick="showScreen('profile')">
-
-Save Changes
-
-</button>
+<div id="editProfileError" class="sc-form-error" role="alert" aria-live="polite" hidden></div>
+<button class="primary" onclick="saveSmartCampusProfileChanges()">Save Changes</button>
 
 </section>
 
@@ -3505,6 +3483,545 @@ If no matching file exists, the original emoji remains visible.
     img.src = candidates[0];
   });
 })();
+
+/* =====================================================
+HEURISTIC REVIEW IMPROVEMENTS
+Preserves the existing screens, logo, theme, and facility icons.
+===================================================== */
+(function addHeuristicImprovements(){
+  const style = document.createElement("style");
+  style.textContent = `
+    #scToast{position:absolute;left:16px;right:16px;top:52px;z-index:2000;background:#25254A;color:#fff;padding:12px 14px;border-radius:13px;box-shadow:0 6px 22px #0002;font-size:13px;line-height:1.4;display:none}
+    #scToast.show{display:block;animation:appear .2s ease}
+    .sc-action-row{display:flex;gap:8px;margin:10px 0}
+    .sc-action-row button{flex:1;padding:11px 8px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--purple);font-weight:700}
+    .sc-small-note{font-size:12px;padding:10px 12px;background:#F1EFFF;border-radius:12px;margin:10px 0;color:#25254A}
+    .sc-help-link{display:block;text-align:center;margin:12px 0;color:var(--purple);font-weight:700;text-decoration:underline;cursor:pointer}
+    .sc-no-results{display:none;padding:16px;background:#fff;border:1px solid var(--border);border-radius:14px;margin:10px 0;color:var(--dark);font-size:13px}
+    .sc-status{font-size:12px;color:#168D7D;margin-top:8px;font-weight:700}
+    .app.high-contrast #scToast{background:#000;color:#fff;border:2px solid #fff}
+    .app.high-contrast .sc-action-row button{background:#fff;color:#000;border:2px solid #000}
+  `;
+  document.head.appendChild(style);
+
+  const app = document.querySelector(".app");
+  if (!app || document.getElementById("scToast")) return;
+  const toast = document.createElement("div");
+  toast.id = "scToast";
+  toast.setAttribute("role","status");
+  toast.setAttribute("aria-live","polite");
+  app.appendChild(toast);
+
+  window.scToast = function(message){
+    const el = document.getElementById("scToast");
+    if(!el) return;
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(window.__scToastTimer);
+    window.__scToastTimer = setTimeout(()=>el.classList.remove("show"),3200);
+  };
+
+  // Clear selection status is visible and easy to understand.
+  const destination = document.getElementById("destination");
+  if(destination){
+    const actions = document.createElement("div");
+    actions.className = "sc-action-row";
+    actions.innerHTML = '<button type="button" id="scChangeDestination">Change destination</button><button type="button" id="scCancelRoute">Cancel</button>';
+    const directionsButton = destination.querySelector('button.primary');
+    if(directionsButton) directionsButton.before(actions);
+    document.getElementById("scChangeDestination").addEventListener("click",()=>showScreen("search"));
+    document.getElementById("scCancelRoute").addEventListener("click",()=>{
+      if(confirm("Cancel this destination and return to Search?")) showScreen("search");
+    });
+    const status = document.createElement("div");
+    status.className = "sc-status";
+    status.id = "scDestinationStatus";
+    status.textContent = "✓ Selected destination: Library";
+    destination.querySelector(".center")?.appendChild(status);
+  }
+
+  // Search history and favorites use browser-local storage; nothing is prefilled.
+  const readList = key => { try{return JSON.parse(localStorage.getItem(key)||"[]")}catch(e){return []} };
+  const writeList = (key,list) => localStorage.setItem(key,JSON.stringify(list));
+  const addRecent = (name) => {
+    if(!name) return;
+    const list = [name,...readList("scRecentPlaces").filter(x=>x!==name)].slice(0,5);
+    writeList("scRecentPlaces",list);
+  };
+  const searchInput = document.querySelector('#search input[oninput*="searchPlaces"]');
+  if(searchInput){
+    const noResults = document.createElement("div");
+    noResults.className="sc-no-results";
+    noResults.id="scNoResults";
+    noResults.innerHTML="<strong>Destination not found.</strong><br>Check the spelling or try another facility.";
+    document.getElementById("placeResults")?.after(noResults);
+    const recentCard = document.createElement("div");
+    recentCard.className="card";
+    recentCard.id="scRecentCard";
+    recentCard.innerHTML='<h3>Recent searches</h3><div id="scRecentList" class="sc-small-note">Your recent searches will appear here.</div>';
+    noResults.after(recentCard);
+    const updateRecent = ()=>{
+      const list=readList("scRecentPlaces");
+      const host=document.getElementById("scRecentList");
+      if(!host)return;
+      host.innerHTML="";
+      if(!list.length){host.textContent="Your recent searches will appear here.";return;}
+      list.forEach(name=>{
+        const b=document.createElement("button");
+        b.type="button"; b.textContent="📍 "+name;
+        b.style.cssText="display:block;width:100%;text-align:left;padding:8px;border:0;background:transparent;color:var(--purple);font-weight:700";
+        b.addEventListener("click",()=>openDestination(name,iconForPlace(name)));
+        host.appendChild(b);
+      });
+    };
+    window.scUpdateRecent=updateRecent;
+    const oldSearchPlaces=window.searchPlaces;
+    window.searchPlaces=function(value){
+      const places=[...document.querySelectorAll("#placeResults .place")];
+      let count=0;
+      places.forEach(place=>{
+        const match=place.innerText.toLowerCase().includes((value||"").toLowerCase());
+        place.style.display=match?"block":"none";
+        if(match)count++;
+      });
+      noResults.style.display=(value.trim() && count===0)?"block":"none";
+      updateRecent();
+    };
+    updateRecent();
+  }
+
+  // A visible tutorial and help section for first-time visitors.
+  if(!document.getElementById("help")){
+    const help=document.createElement("section");
+    help.id="help"; help.className="screen";
+    help.innerHTML=`
+      <div class="header"><button class="back" type="button" onclick="showScreen('home')">‹</button><div><h2>Help & Quick Guide</h2><p>Use SmartCampus with confidence</p></div></div>
+      <div class="card"><h3>1. Choose your campus</h3><p style="margin-top:6px">Select your college campus before searching for places.</p></div>
+      <div class="card"><h3>2. Find a destination</h3><p style="margin-top:6px">Search for a library, lab, canteen or another facility. Check the selected destination before continuing.</p></div>
+      <div class="card"><h3>3. Review your route</h3><p style="margin-top:6px">Choose a route and check live directions. Accessible routes must be verified by campus staff or reliable map data.</p></div>
+      <div class="card"><h3>4. Change or cancel</h3><p style="margin-top:6px">Use Back or Change destination if you selected the wrong place.</p></div>
+      <div class="card"><h3>Frequently asked questions</h3><p style="margin-top:6px"><b>Why can't I find a place?</b><br>Check spelling or choose another facility.</p><p style="margin-top:10px"><b>Is the indoor route verified?</b><br>Not always. Open the live map and confirm room-level directions with campus staff.</p><p style="margin-top:10px"><b>How do I make text easier to read?</b><br>Open Accessibility and turn on Large Text or High Contrast.</p></div>
+      <button class="primary" type="button" onclick="showScreen('search')">Start searching</button>`;
+    app.appendChild(help);
+  }
+  const home = document.getElementById("home");
+  if(home && !document.getElementById("scHelpButton")){
+    const b=document.createElement("button");
+    b.id="scHelpButton"; b.className="secondary"; b.type="button";
+    b.textContent="❔ Help & Quick Guide";
+    b.addEventListener("click",()=>showScreen("help"));
+    const nav=home.querySelector(".bottom-nav");
+    if(nav) nav.before(b);
+  }
+
+  // Add save/favourite action to destination details.
+  const dest = document.getElementById("destination");
+  if(dest && !document.getElementById("scSavePlace")){
+    const save=document.createElement("button");
+    save.id="scSavePlace"; save.className="secondary"; save.type="button";
+    save.textContent="☆ Save this place";
+    const actions=dest.querySelector(".sc-action-row");
+    if(actions) actions.after(save);
+    save.addEventListener("click",()=>{
+      const list=readList("scSavedPlaces");
+      if(list.includes(selectedDestination)){
+        scToast("This place is already saved.");
+      }else{
+        list.push(selectedDestination); writeList("scSavedPlaces",list);
+        save.textContent="★ Place saved";
+        scToast("Saved "+selectedDestination+" to your places.");
+      }
+    });
+  }
+
+  // Clearer feedback for route preparation; do not claim an illustrative route is live.
+  const routeButton=document.querySelector('#route button.primary');
+  if(routeButton){
+    routeButton.addEventListener("click",()=>{
+      const msg=document.getElementById("scRouteStatus");
+      if(msg)msg.remove();
+      const status=document.createElement("p");
+      status.id="scRouteStatus";status.className="sc-small-note";
+      status.setAttribute("role","status");
+      status.textContent="Preparing route preview… Check live directions before walking.";
+      routeButton.before(status);
+      setTimeout(()=>{if(status.isConnected)status.textContent="Route preview is ready. This preview is illustrative; use Check Live Directions for current directions.";},450);
+    });
+  }
+
+  // Better keyboard/focus feedback and reduce-motion preference.
+  document.querySelectorAll("button").forEach(b=>{
+    if(!b.getAttribute("aria-label") && !b.textContent.trim()) b.setAttribute("aria-label","Toggle setting");
+  });
+})();
+
+// Keep these original app functions, adding heuristic feedback and history.
+const scOriginalShowScreen = window.showScreen;
+window.showScreen = function(id){
+  if(typeof scOriginalShowScreen==="function") scOriginalShowScreen(id);
+  const target=document.getElementById(id);
+  if(target){
+    const heading=target.querySelector("h1,h2");
+    if(heading) document.title=heading.textContent.trim()+" | SmartCampus";
+  }
+};
+
+const scOriginalOpenDestination = window.openDestination;
+window.openDestination = function(name,icon){
+  if(!selectedCampus){
+    scToast?.("Please choose a campus before selecting a destination.");
+    showScreen("campuses"); return;
+  }
+  if(typeof scOriginalOpenDestination==="function") scOriginalOpenDestination(name,icon);
+  try{
+    const list=JSON.parse(localStorage.getItem("scRecentPlaces")||"[]");
+    localStorage.setItem("scRecentPlaces",JSON.stringify([name,...list.filter(x=>x!==name)].slice(0,5)));
+  }catch(e){}
+  const status=document.getElementById("scDestinationStatus");
+  if(status)status.textContent="✓ Selected destination: "+name+" • "+selectedCampus;
+  const save=document.getElementById("scSavePlace");
+  if(save)save.textContent="☆ Save this place";
+  if(window.scUpdateRecent)window.scUpdateRecent();
+  scToast?.("Destination selected: "+name);
+};
+
+function iconForPlace(name){
+  const n=(name||"").toLowerCase();
+  if(n.includes("library"))return "📚";
+  if(n.includes("lab"))return "🧪";
+  if(n.includes("canteen")||n.includes("cafeteria"))return "🍴";
+  if(n.includes("medical"))return "🚑";
+  if(n.includes("hostel"))return "🏠";
+  if(n.includes("washroom")||n.includes("restroom"))return "🚻";
+  return "📍";
+}
+
+const scOriginalSelectRoute=window.selectRoute;
+window.selectRoute=function(element,type){
+  if(typeof scOriginalSelectRoute==="function")scOriginalSelectRoute(element,type);
+  scToast?.(type==="accessible" ? "Accessible route selected. Verify step-free access before walking." : "Normal route selected. Review live directions before walking.");
+};
+
+const scOriginalStartWalking=window.startWalking;
+window.startWalking=function(){
+  scToast?.("Navigation preview started. For accurate directions, check the live map.");
+  if(typeof scOriginalStartWalking==="function")scOriginalStartWalking();
+};
+
+// Make route failures and empty searches understandable rather than silent.
+window.addEventListener("error",function(){
+  if(typeof window.scToast==="function")window.scToast("Something did not load correctly. Please go back and try again.");
+});
+
+
+/* Registration validation + account-level campus restriction */
+(function addCampusRegistrationRules(){
+  const style=document.createElement('style');
+  style.textContent=`
+    .sc-field-label{display:block;margin:10px 2px 5px;font-size:12px;font-weight:700;color:var(--dark,#202a43)}
+    .sc-field-label strong,.sc-terms strong{color:#d93636}
+    .sc-form-hint{font-size:11px;line-height:1.45;color:#777;margin:3px 2px 8px}
+    .sc-form-error{margin:10px 0;padding:10px 12px;border-radius:10px;background:#fff0f0;color:#a32222;border:1px solid #f1baba;font-size:12px;line-height:1.45}
+    .sc-terms{display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:11px;color:#777}
+    .sc-terms input{margin-top:2px;flex-shrink:0}
+    #signup .input:invalid:not(:placeholder-shown){border-color:#d93636}
+  `;
+  document.head.appendChild(style);
+})();
+
+function createSmartCampusAccount(){
+  const get=id=>document.getElementById(id);
+  const name=get('scFullName').value.trim();
+  const email=get('scEmail').value.trim();
+  const phone=get('scPhone').value.trim();
+  const userType=get('scUserType').value;
+  const campus=get('scCampusSelect').value;
+  const year=get('scYear').value;
+  const password=get('scPassword').value;
+  const confirm=get('scConfirmPassword').value;
+  const terms=get('scTerms').checked;
+  const error=get('scSignupError');
+  const fail=message=>{error.textContent=message;error.hidden=false;error.scrollIntoView({behavior:'smooth',block:'nearest'});};
+  error.hidden=true; error.textContent='';
+  if(typeof window.scValidateSignupFields==='function' && !window.scValidateSignupFields()){
+    const firstInvalid=document.querySelector('#signup .input[aria-invalid="true"]');
+    if(firstInvalid)firstInvalid.focus();
+    fail('Please correct the highlighted fields. Read the instruction below each field and try again.');return;
+  }
+  if(!name || !email || !userType || !campus || !password || !confirm){fail('Please complete all mandatory fields marked with *.');return;}
+  if(!/^[A-Za-z][A-Za-z .'-]{1,79}$/.test(name)){fail('Enter a valid full name using letters.');get('scFullName').focus();return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fail('Enter a valid email address, for example name@example.com.');get('scEmail').focus();return;}
+  if(phone && !/^[6-9]\d{9}$/.test(phone)){fail('Enter a valid 10-digit Indian mobile number, or leave this field empty.');get('scPhone').focus();return;}
+  if(password.length<8){fail('Password must contain at least 8 characters.');get('scPassword').focus();return;}
+  if(password!==confirm){fail('Passwords do not match. Please re-enter them.');get('scConfirmPassword').focus();return;}
+  if(!terms){fail('Please agree to the Terms & Privacy Policy to continue.');return;}
+  const account={name,email,phone,userType,campus,year,createdAt:new Date().toISOString()};
+  try{localStorage.setItem('scAccountProfile',JSON.stringify(account));localStorage.setItem('scRegisteredCampus',campus);}catch(e){}
+  selectedCampus=campus;
+  window.scRegisteredCampus=campus;
+  applySmartCampusCampusAccess();
+  const typeLabel=get('scCreatedUserType'); if(typeLabel)typeLabel.textContent=userType;
+  const created=get('created');
+  if(created){
+    let profileSummary=document.getElementById('scCreatedSummary');
+    if(!profileSummary){profileSummary=document.createElement('p');profileSummary.id='scCreatedSummary';profileSummary.style.cssText='font-size:12px;line-height:1.5;margin-top:10px;';created.querySelector('.card')?.appendChild(profileSummary);}
+    if(profileSummary)profileSummary.textContent=name+' • '+campus;
+  }
+  const profileName=document.getElementById('profileName'); if(profileName)profileName.textContent=name;
+  const profileDetails=document.getElementById('profileDisplayDetails'); if(profileDetails)profileDetails.textContent=[userType,campus,year].filter(Boolean).join(' • ');
+  showScreen('created');
+}
+
+function applySmartCampusCampusAccess(){
+  let campus='';
+  try{campus=localStorage.getItem('scRegisteredCampus')||'';}catch(e){}
+  if(!campus){
+    document.querySelectorAll('#campusList .campus').forEach(card=>card.style.display='');
+    return;
+  }
+  selectedCampus=campus;
+  document.querySelectorAll('#campusList .campus').forEach(card=>{
+    const cardName=(card.dataset.name||card.querySelector('.card-title')?.textContent||'').trim().toLowerCase();
+    const allowed=cardName===campus.toLowerCase() || (campus==='Cummins College of Engineering for Women' && cardName==='cummins college');
+    card.style.display=allowed?'':'none';
+    card.setAttribute('aria-hidden',allowed?'false':'true');
+    if(!allowed)card.onclick=null;
+  });
+  const search=document.querySelector('#campuses input');
+  if(search){search.disabled=true;search.placeholder='Campus access is limited to your registered college';}
+  const campusSelect=document.getElementById('scCampusSelect');
+  if(campusSelect && document.getElementById('signup')?.classList.contains('active')){
+    campusSelect.value=campus;
+    campusSelect.disabled=true;
+  }
+  // Keep every map/search destination tied to the registered campus.
+  const mapFrame=document.getElementById('realCampusMap');
+  if(mapFrame)mapFrame.src='https://maps.google.com/maps?q='+encodeURIComponent(campus+', Pune, Maharashtra')+'&output=embed';
+  const label=document.getElementById('campusName'); if(label)label.textContent=campus+' Map';
+  const small=document.getElementById('selectedCampusSmall'); if(small)small.textContent=campus;
+  const searchLabel=document.getElementById('searchSelectedCampus'); if(searchLabel)searchLabel.textContent=campus;
+  const searchTitle=document.getElementById('searchCampusName'); if(searchTitle)searchTitle.textContent=campus+' • Campus';
+  const destLabel=document.getElementById('destinationCampus'); if(destLabel)destLabel.textContent=campus;
+  const arrivedLabel=document.getElementById('arrivedCampus'); if(arrivedLabel)arrivedLabel.textContent=campus;
+}
+
+const scPreCampusSelect=window.selectCampus;
+window.selectCampus=function(name){
+  let registered='';try{registered=localStorage.getItem('scRegisteredCampus')||'';}catch(e){}
+  if(registered && name!==registered){
+    if(typeof window.scToast==='function')window.scToast('Access restricted: your account can only view '+registered+'.');
+    applySmartCampusCampusAccess();
+    return;
+  }
+  selectedCampus=registered||name;
+  if(typeof scPreCampusSelect==='function')scPreCampusSelect(selectedCampus);
+};
+
+const scPreShowScreen=window.showScreen;
+window.showScreen=function(id){
+  let registered='';try{registered=localStorage.getItem('scRegisteredCampus')||'';}catch(e){}
+  if(registered && id==='campuses')applySmartCampusCampusAccess();
+  if(typeof scPreShowScreen==='function')scPreShowScreen(id);
+  if(registered && id==='campuses')applySmartCampusCampusAccess();
+};
+
+document.addEventListener('DOMContentLoaded',applySmartCampusCampusAccess);
+applySmartCampusCampusAccess();
+
+
+/* Live field instructions and password-strength guidance */
+(function addLiveSignupGuidance(){
+  const style=document.createElement('style');
+  style.textContent=`
+    .sc-field-feedback{display:block;min-height:0;margin:3px 2px 7px;font-size:11px;line-height:1.4;color:#626b7e}
+    .sc-field-feedback:empty{display:none}
+    .sc-field-feedback.is-error{color:#b42318;font-weight:600}
+    .sc-field-feedback.is-success{color:#18794e}
+    .sc-password-meter{height:6px;background:#e7e7ef;border-radius:99px;overflow:hidden;margin:6px 2px 4px}
+    .sc-password-meter-fill{height:100%;width:0;background:#d93636;transition:width .2s ease,background .2s ease;border-radius:99px}
+    .sc-password-status{font-size:11px;font-weight:700;margin:3px 2px 5px}
+    #signup .input[aria-invalid="true"]{border:1px solid #d93636!important;box-shadow:0 0 0 2px rgba(217,54,54,.08)}
+    #signup .input[aria-invalid="false"]{border-color:#269b68}
+  `;
+  document.head.appendChild(style);
+  const ids=['scFullName','scEmail','scPhone','scUserType','scCampusSelect','scYear','scPassword','scConfirmPassword'];
+  function feedbackFor(el){
+    let f=document.getElementById(el.id+'Feedback');
+    if(!f){f=document.createElement('small');f.id=el.id+'Feedback';f.className='sc-field-feedback';f.setAttribute('aria-live','polite');el.insertAdjacentElement('afterend',f);}
+    return f;
+  }
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)feedbackFor(el);});
+  const password=document.getElementById('scPassword');
+  if(password){
+    let meter=document.getElementById('scPasswordMeter');
+    if(!meter){meter=document.createElement('div');meter.id='scPasswordMeter';meter.className='sc-password-meter';meter.setAttribute('aria-hidden','true');const fill=document.createElement('div');fill.id='scPasswordMeterFill';fill.className='sc-password-meter-fill';meter.appendChild(fill);password.insertAdjacentElement('afterend',meter);}
+    let status=document.getElementById('scPasswordStatus');
+    if(!status){status=document.createElement('div');status.id='scPasswordStatus';status.className='sc-password-status';status.setAttribute('aria-live','polite');meter.insertAdjacentElement('afterend',status);}
+    const hint=feedbackFor(password);hint.textContent='Use 8+ characters. For a stronger password, combine uppercase and lowercase letters, numbers, and symbols.';
+  }
+  function setMessage(el,message,state){
+    const f=feedbackFor(el);f.textContent=message||'';f.classList.toggle('is-error',state==='error');f.classList.toggle('is-success',state==='success');
+    if(state==='error')el.setAttribute('aria-invalid','true');else if(state==='success')el.setAttribute('aria-invalid','false');else el.removeAttribute('aria-invalid');
+  }
+  function passwordScore(value){
+    if(!value)return {score:0,label:'No password entered',color:'#d93636',message:'Enter a password to see its strength.'};
+    const checks=[/[a-z]/.test(value),/[A-Z]/.test(value),/\d/.test(value),/[^A-Za-z0-9]/.test(value)].filter(Boolean).length;
+    if(value.length<8 || checks<2)return {score:25,label:'Weak password',color:'#d93636',message:'Weak: use at least 8 characters and combine different character types.'};
+    if(value.length>=12 && checks>=4)return {score:100,label:'Strong password',color:'#16834a',message:'Strong: good mix of length, uppercase/lowercase letters, numbers, and symbols.'};
+    if(value.length>=10 && checks>=3)return {score:75,label:'Good password',color:'#269b68',message:'Good: add another character type or make it longer to improve it further.'};
+    return {score:50,label:'Medium password',color:'#c58a00',message:'Medium: try 12+ characters with uppercase/lowercase letters, a number, and a symbol.'};
+  }
+  function validateOne(el){
+    if(!el)return true;
+    const v=el.value.trim();let message='';let ok=true;
+    switch(el.id){
+      case 'scFullName': if(!v){message='Enter your full name.';ok=false;}else if(!/^[A-Za-z][A-Za-z .\'-]{1,79}$/.test(v)){message='Use 2–80 characters with letters and spaces only (apostrophes, dots, and hyphens are allowed).';ok=false;}else message='Name looks valid.';break;
+      case 'scEmail': if(!v){message='Enter your email address.';ok=false;}else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){message='Enter a valid email, for example name@example.com.';ok=false;}else message='Email format looks valid.';break;
+      case 'scPhone': if(v&&!/^[6-9]\d{9}$/.test(v)){message='Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9, or leave it blank.';ok=false;}else if(v)message='Mobile number format looks valid.';break;
+      case 'scUserType': if(!v){message='Choose Student, Faculty, Visitor, or Staff.';ok=false;}else message='User type selected.';break;
+      case 'scCampusSelect': if(!v){message='Select your college campus to continue.';ok=false;}else message='Campus selected. Your account will be limited to this campus.';break;
+      case 'scYear': if(v)message='Year selected.';break;
+      case 'scPassword': {
+        const strength=passwordScore(el.value);const status=document.getElementById('scPasswordStatus');const fill=document.getElementById('scPasswordMeterFill');
+        if(status){status.textContent=strength.label;status.style.color=strength.color;}
+        if(fill){fill.style.width=strength.score+'%';fill.style.background=strength.color;}
+        if(!el.value){message='Create a password with at least 8 characters.';ok=false;}else if(el.value.length<8){message='Too short: password must have at least 8 characters.';ok=false;}else if(strength.score<50){message=strength.message;ok=false;}else {message=strength.message;}
+        setMessage(el,message,ok?'success':'error');
+        const confirm=document.getElementById('scConfirmPassword');if(confirm&&confirm.value)validateOne(confirm);
+        return ok;
+      }
+      case 'scConfirmPassword': {const pass=document.getElementById('scPassword').value;if(!v){message='Re-enter your password to confirm it.';ok=false;}else if(v!==pass){message='Passwords do not match. Check both fields and try again.';ok=false;}else message='Passwords match.';break;}
+    }
+    setMessage(el,message,ok?(message?'success':''): 'error');return ok;
+  }
+  ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.addEventListener('input',()=>validateOne(el));el.addEventListener('change',()=>validateOne(el));el.addEventListener('blur',()=>{if(el.value.trim()||['scFullName','scEmail','scUserType','scCampusSelect','scPassword','scConfirmPassword'].includes(id))validateOne(el);});});
+  const terms=document.getElementById('scTerms');
+  if(terms){let f=document.getElementById('scTermsFeedback');if(!f){f=document.createElement('small');f.id='scTermsFeedback';f.className='sc-field-feedback';terms.closest('.sc-terms')?.insertAdjacentElement('afterend',f);}terms.addEventListener('change',()=>{f.textContent=terms.checked?'Terms accepted.':'Please accept the Terms & Privacy Policy to create your account.';f.classList.toggle('is-error',!terms.checked);f.classList.toggle('is-success',terms.checked);});}
+  window.scValidateSignupFields=function(){let valid=true;ids.filter(id=>id!=='scYear').forEach(id=>{const el=document.getElementById(id);if(el&&!validateOne(el))valid=false;});if(terms&&!terms.checked){valid=false;const f=document.getElementById('scTermsFeedback');if(f){f.textContent='Please accept the Terms & Privacy Policy to create your account.';f.classList.add('is-error');} }return valid;};
+})();
+
+
+/* Registered profile: prefill all fields and allow safe edits */
+(function registeredProfileSync(){
+  function readAccount(){
+    try { return JSON.parse(localStorage.getItem('scAccountProfile') || 'null'); }
+    catch(e) { return null; }
+  }
+  function saveAccount(account){
+    try {
+      localStorage.setItem('scAccountProfile', JSON.stringify(account));
+      if(account.campus) localStorage.setItem('scRegisteredCampus', account.campus);
+      return true;
+    } catch(e) { return false; }
+  }
+  function setValue(id,value){const el=document.getElementById(id);if(el)el.value=value||'';}
+  function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=value||'';}
+  function updateProfileViews(account){
+    if(!account)return;
+    const name=account.name||'Your Profile';
+    const details=[account.userType,account.campus,account.year].filter(Boolean).join(' • ');
+    setText('profileDisplayName',name);
+    setText('profileDisplayDetails',details||'Complete your profile details.');
+    setText('profileAvatar',(name.trim()[0]||'?').toUpperCase());
+    setText('editProfileAvatar',(name.trim()[0]||'?').toUpperCase());
+    setValue('editProfileName',account.name);
+    setValue('editProfileEmail',account.email);
+    setValue('editProfilePhone',account.phone);
+    setValue('editProfileCampus',account.campus);
+    setValue('editProfileUserType',account.userType);
+    setValue('editProfileYear',account.year);
+  }
+  window.loadSmartCampusRegisteredProfile=function(){updateProfileViews(readAccount());};
+  window.saveSmartCampusProfileChanges=function(){
+    const account=readAccount()||{};
+    const name=(document.getElementById('editProfileName')?.value||'').trim();
+    const email=(document.getElementById('editProfileEmail')?.value||'').trim();
+    const phone=(document.getElementById('editProfilePhone')?.value||'').trim();
+    const userType=document.getElementById('editProfileUserType')?.value||'';
+    const year=document.getElementById('editProfileYear')?.value||'';
+    const err=document.getElementById('editProfileError');
+    const fail=(msg,id)=>{if(err){err.textContent=msg;err.hidden=false;}const el=id&&document.getElementById(id);if(el)el.focus();};
+    if(err){err.hidden=true;err.textContent='';}
+    if(!/^[A-Za-z][A-Za-z .'-]{1,79}$/.test(name)){fail('Enter a valid full name using letters, spaces, apostrophes, dots, or hyphens.','editProfileName');return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fail('Enter a valid email address, for example name@example.com.','editProfileEmail');return;}
+    if(phone&&!/^[6-9]\d{9}$/.test(phone)){fail('Enter a valid 10-digit Indian mobile number or leave it blank.','editProfilePhone');return;}
+    if(!userType){fail('Please select your user type.','editProfileUserType');return;}
+    // Preserve the campus selected during registration; it cannot be changed from profile editing.
+    const registeredCampus=localStorage.getItem('scRegisteredCampus')||account.campus||'';
+    const updated={...account,name,email,phone,userType,year,campus:registeredCampus};
+    if(!saveAccount(updated)){fail('Your changes could not be saved in this browser. Please try again.');return;}
+    updateProfileViews(updated);
+    if(typeof window.scToast==='function')window.scToast('Profile changes saved successfully.');
+    if(typeof window.applySmartCampusCampusAccess==='function')window.applySmartCampusCampusAccess();
+    if(typeof window.showScreen==='function')window.showScreen('profile');
+  };
+  // Load registration values when profile screens open, including after refresh.
+  const previousShowScreen=window.showScreen;
+  window.showScreen=function(id){
+    if(id==='profile'||id==='editProfile')window.loadSmartCampusRegisteredProfile();
+    if(typeof previousShowScreen==='function')previousShowScreen(id);
+    if(id==='profile'||id==='editProfile')window.loadSmartCampusRegisteredProfile();
+  };
+  document.addEventListener('DOMContentLoaded',window.loadSmartCampusRegisteredProfile);
+  window.loadSmartCampusRegisteredProfile();
+})();
+
+
+
+/* Home screen: use the campus selected at registration instead of asking again. */
+function scSyncHomeCampusCard(){
+  let campus='';
+  try{
+    campus=localStorage.getItem('scRegisteredCampus')||'';
+    if(!campus){const account=JSON.parse(localStorage.getItem('scAccountProfile')||'null');campus=account?.campus||'';}
+  }catch(e){}
+  const card=document.getElementById('scHomeCampusCard');
+  const heading=document.getElementById('scHomeCampusHeading');
+  const name=document.getElementById('scHomeCampusName');
+  const hint=document.getElementById('scHomeCampusHint');
+  if(!card||!heading||!name||!hint)return;
+  if(campus){
+    selectedCampus=campus;
+    heading.textContent='📍 Your Registered Campus';
+    name.textContent=campus;
+    hint.textContent='Tap to view your campus map and facilities';
+    card.setAttribute('aria-label','View map for '+campus);
+  }else{
+    heading.textContent='📍 Campus Setup';
+    name.textContent='Choose your campus during registration';
+    hint.textContent='Your campus will appear here after you create an account';
+    card.setAttribute('aria-label','Campus setup information');
+  }
+}
+function scOpenHomeCampus(){
+  let campus='';
+  try{campus=localStorage.getItem('scRegisteredCampus')||'';}catch(e){}
+  if(!campus){
+    if(typeof window.scToast==='function')window.scToast('Please create an account and select your campus during registration first.');
+    else alert('Please create an account and select your campus during registration first.');
+    showScreen('signup');
+    return;
+  }
+  selectedCampus=campus;
+  if(typeof window.applySmartCampusCampusAccess==='function')window.applySmartCampusCampusAccess();
+  if(typeof window.selectCampus==='function')window.selectCampus(campus);
+  else showScreen('map');
+}
+
+// Keep the Home card updated after account creation, refresh, and navigation.
+const scOriginalCreateAccountForHome=window.createSmartCampusAccount;
+window.createSmartCampusAccount=function(){
+  if(typeof scOriginalCreateAccountForHome==='function')scOriginalCreateAccountForHome();
+  scSyncHomeCampusCard();
+};
+const scOriginalShowScreenForHome=window.showScreen;
+window.showScreen=function(id){
+  if(typeof scOriginalShowScreenForHome==='function')scOriginalShowScreenForHome(id);
+  if(id==='home')scSyncHomeCampusCard();
+};
+document.addEventListener('DOMContentLoaded',scSyncHomeCampusCard);
+scSyncHomeCampusCard();
+
 </script>
 
 </body>
