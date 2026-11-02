@@ -855,6 +855,20 @@ button{
 .sc-step-list strong{display:block;color:#302b48;font-size:13px;line-height:1.35}
 .sc-step-list small{display:block;color:#777386;font-size:11px;line-height:1.45;margin-top:3px}
 </style>
+
+<style id="sc-navigation-upgrade-style">
+.sc-destination-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fff;border:1px solid #e9e4f4;border-radius:15px;padding:13px;margin:8px 0 12px}
+.sc-destination-summary>div:last-child{grid-column:1/-1;border-top:1px solid #f0edf6;padding-top:9px}
+.sc-summary-label{display:block;color:#898398;font-size:9px;font-weight:800;letter-spacing:.08em;margin-bottom:4px}
+.sc-destination-summary strong{display:block;color:#302b48;font-size:13px;overflow-wrap:anywhere}
+.sc-nav-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}
+.sc-nav-controls button{min-height:44px;border-radius:12px;font-weight:700}
+.sc-nav-controls .sc-end-walk{grid-column:1/-1;background:#fff1f1;color:#c43d4a;border:1px solid #ffdada}
+.sc-nav-controls button:disabled{opacity:.45;cursor:not-allowed}
+.sc-walk-status{font-size:11px;color:#6f6980;background:#f6f3fc;border-radius:10px;padding:9px 11px;margin:8px 0 14px;line-height:1.4}
+#scWalkingDirections{margin-top:10px}
+@media(min-width:600px){.sc-destination-summary{grid-template-columns:1fr 1fr 1fr}.sc-destination-summary>div:last-child{grid-column:auto;border-top:0;border-left:1px solid #f0edf6;padding:0 0 0 10px}}
+</style>
 </head>
 
 <body>
@@ -2004,6 +2018,11 @@ LIVE NAVIGATION
   <div id="walkingRouteMap" class="sc-route-canvas" role="img" aria-label="Schematic walking route"></div>
 </div>
 <p id="walkingMapNote" class="sc-small-note" role="status">Select a destination to see its walking route.</p>
+<div id="scDestinationSummary" class="sc-destination-summary" aria-live="polite">
+  <div><span class="sc-summary-label">DESTINATION</span><strong id="scSummaryName">Library</strong></div>
+  <div><span class="sc-summary-label">ROUTE TYPE</span><strong id="scSummaryMode">Accessible route</strong></div>
+  <div><span class="sc-summary-label">DISTANCE / TIME</span><strong id="scSummaryEstimate">Not measured</strong></div>
+</div>
 <div id="scWalkingDirections" class="sc-directions-card" aria-live="polite"><h3>Walking directions</h3><p>Select a destination to view the route steps.</p></div>
 
 
@@ -2031,6 +2050,12 @@ onclick="nextNavigation()">
 Next Direction →
 
 </button>
+<div class="sc-nav-controls">
+  <button type="button" class="secondary" id="scPauseWalk">Ⅱ Pause</button>
+  <button type="button" class="secondary" id="scResumeWalk" disabled>▶ Resume</button>
+  <button type="button" class="sc-end-walk" id="scEndWalk">End Walk</button>
+</div>
+<div id="scWalkStatus" class="sc-walk-status" role="status">Route preview • GPS tracking is not connected.</div>
 
 
 <button class="secondary"
@@ -2077,10 +2102,12 @@ NEXT NAVIGATION
 </div>
 
 
+<div id="scSecondStepStatus" class="sc-walk-status" role="status">Next section of the suggested route • schematic preview.</div>
+
 <div class="navigation-bottom">
 
 <p>
-80 m remaining • 2 min
+Continue along the suggested path
 </p>
 
 <div class="next-direction">
@@ -4135,8 +4162,9 @@ scSyncHomeCampusCard();
   function scLoadWalkingRoute(){
     let route;
     ["walkingRouteMap","walkingRouteMap2"].forEach(id=>{route=scRenderRoute(document.getElementById(id),selectedDestination)||route;});
+    scUpdateSummary();
     const note=document.getElementById("walkingMapNote");
-    if(note) note.textContent="Suggested campus path to "+selectedDestination+" • schematic route, not measured indoor directions.";
+    if(note) note.textContent=(selectedRoute==="accessible"?"Accessible-path preference":"Normal walking-path preference")+" • schematic campus preview; exact paths and measurements are not verified.";
     const directions=document.getElementById("scWalkingDirections");
     if(directions){
       directions.innerHTML=`<h3>Walking directions</h3>
@@ -4148,13 +4176,37 @@ scSyncHomeCampusCard();
         </ol>`;
     }
     const next=document.querySelector('#navigation .next-direction');
-    if(next) next.textContent='↗ Follow the highlighted campus path';
+    if(next) next.textContent='↗ '+(route?route.turn:'Follow the highlighted campus path');
     const instruction=document.querySelector('#navigation .navigation-bottom > p:last-child');
     if(instruction) instruction.textContent=route?route.turn+' Then continue to '+selectedDestination+'.':'Continue along the highlighted path to your destination.';
     const distance=document.getElementById('distanceText');
     if(distance) distance.textContent='Follow the highlighted path • '+selectedDestination;
   }
 
+  // Navigation controls are a guided prototype; they do not simulate GPS progress.
+  let scWalkPaused = false;
+  let scWalkStep = 0;
+  const scStepNames = [
+    "Start at the marked campus entry point.",
+    "Follow the highlighted path toward the next junction.",
+    "At the junction, follow the turn shown on the route preview.",
+    "Continue to the selected destination pin."
+  ];
+  function scUpdateSummary(){
+    const name=String(selectedDestination||"Destination");
+    const clean=name.replace(/[&<>\"']/g, "");
+    const n=document.getElementById("scSummaryName"); if(n)n.textContent=name;
+    const mode=document.getElementById("scSummaryMode"); if(mode)mode.textContent=selectedRoute==="accessible"?"Accessible route":"Fastest / normal route";
+    const estimate=document.getElementById("scSummaryEstimate"); if(estimate)estimate.textContent="Not measured • ETA unavailable";
+    const nav=document.getElementById("navDestination"); if(nav)nav.textContent=name;
+  }
+  function scSetWalkStatus(message){const el=document.getElementById("scWalkStatus");if(el)el.textContent=message;}
+  function scResetWalk(){
+    scWalkPaused=false;scWalkStep=0;
+    const pause=document.getElementById("scPauseWalk"),resume=document.getElementById("scResumeWalk");
+    if(pause)pause.disabled=false;if(resume)resume.disabled=true;
+    scSetWalkStatus("Route preview • GPS tracking is not connected.");
+  }
   // Ensure each newly selected place updates its icon and its map destination.
   const oldOpenDestination = window.openDestination;
   window.openDestination = function(name, icon){
@@ -4166,6 +4218,7 @@ scSyncHomeCampusCard();
     if (navName) navName.textContent = name;
     const arrivedName = document.getElementById("arrivedDestination");
     if (arrivedName) arrivedName.textContent = name;
+    scResetWalk(); scUpdateSummary();
     // Reset stale navigation maps when the user changes destination.
     ["walkingRouteMap","walkingRouteMap2"].forEach(id=>{
       const route=document.getElementById(id);
@@ -4182,8 +4235,10 @@ scSyncHomeCampusCard();
     }
     const name = document.getElementById("navDestination");
     if (name) name.textContent = selectedDestination;
+    scResetWalk();
     scLoadWalkingRoute(null);
     showScreen("navigation");
+    scSetWalkStatus("Preview only: your phone location is not being tracked. Follow verified campus signage if the path differs.");
   };
 
   // If the user explicitly asks to check live directions, use the same selected destination.
@@ -4195,6 +4250,24 @@ scSyncHomeCampusCard();
     }
     if (typeof previousLiveMap === "function") previousLiveMap();
   };
+
+  document.getElementById("scPauseWalk")?.addEventListener("click",()=>{
+    scWalkPaused=true;
+    document.getElementById("scPauseWalk").disabled=true;
+    document.getElementById("scResumeWalk").disabled=false;
+    scSetWalkStatus("Navigation paused. This prototype does not track live movement.");
+  });
+  document.getElementById("scResumeWalk")?.addEventListener("click",()=>{
+    scWalkPaused=false;
+    document.getElementById("scPauseWalk").disabled=false;
+    document.getElementById("scResumeWalk").disabled=true;
+    scSetWalkStatus("Route preview resumed. Use the highlighted path and confirm directions on campus.");
+  });
+  document.getElementById("scEndWalk")?.addEventListener("click",()=>{
+    scResetWalk();
+    showScreen("home");
+  });
+  scUpdateSummary();
 })();
 
 </script>
